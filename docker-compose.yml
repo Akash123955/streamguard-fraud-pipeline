@@ -1,5 +1,3 @@
-version: '3.8'
-
 # StreamGuard Fraud Detection Pipeline — Full Stack
 # Run with: docker-compose up -d
 # Kafka UI:  http://localhost:8080
@@ -45,19 +43,7 @@ services:
     container_name: streamguard-kafka-setup
     depends_on:
       - kafka
-    command: >
-      bash -c "
-        echo 'Waiting for Kafka to be ready...' &&
-        sleep 15 &&
-        kafka-topics --create --if-not-exists --bootstrap-server kafka:9092
-          --topic raw-transactions --partitions 6 --replication-factor 1 &&
-        kafka-topics --create --if-not-exists --bootstrap-server kafka:9092
-          --topic fraud-alerts --partitions 3 --replication-factor 1 &&
-        kafka-topics --create --if-not-exists --bootstrap-server kafka:9092
-          --topic approved-transactions --partitions 3 --replication-factor 1 &&
-        echo 'Topics created successfully!' &&
-        kafka-topics --list --bootstrap-server kafka:9092
-      "
+    command: bash -c "echo 'Waiting for Kafka...' && sleep 15 && kafka-topics --create --if-not-exists --bootstrap-server kafka:9092 --topic raw-transactions --partitions 6 --replication-factor 1 && kafka-topics --create --if-not-exists --bootstrap-server kafka:9092 --topic fraud-alerts --partitions 3 --replication-factor 1 && kafka-topics --create --if-not-exists --bootstrap-server kafka:9092 --topic approved-transactions --partitions 3 --replication-factor 1 && echo 'Topics created!' && kafka-topics --list --bootstrap-server kafka:9092"
     restart: on-failure
 
   # ── Kafka UI — browse topics and messages at http://localhost:8080 ─────────
@@ -75,29 +61,28 @@ services:
 
   # ── Spark Master — coordinates distributed processing ─────────────────────
   spark-master:
-    image: bitnami/spark:3.5.0
+    image: apache/spark:3.5.0
     container_name: streamguard-spark-master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     environment:
-      SPARK_MODE: master
       SPARK_MASTER_HOST: spark-master
-      SPARK_RPC_AUTHENTICATION_ENABLED: "no"
-      SPARK_RPC_ENCRYPTION_ENABLED: "no"
+      SPARK_MASTER_PORT: 7077
+      SPARK_MASTER_WEBUI_PORT: 8081
     ports:
-      - "8081:8080"   # Spark Web UI
+      - "8081:8081"   # Spark Web UI
       - "7077:7077"   # Spark master port
+    volumes:
+      - .:/opt/spark/work-dir   # Mount project so spark-submit can access files
     restart: unless-stopped
 
   # ── Spark Worker — executes the actual streaming jobs ─────────────────────
   spark-worker:
-    image: bitnami/spark:3.5.0
+    image: apache/spark:3.5.0
     container_name: streamguard-spark-worker
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
       - spark-master
     environment:
-      SPARK_MODE: worker
-      SPARK_MASTER_URL: spark://spark-master:7077
-      SPARK_WORKER_MEMORY: 2G
+      SPARK_WORKER_MEMORY: 2g
       SPARK_WORKER_CORES: 2
-      SPARK_RPC_AUTHENTICATION_ENABLED: "no"
-      SPARK_RPC_ENCRYPTION_ENABLED: "no"
     restart: unless-stopped

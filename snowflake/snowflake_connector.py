@@ -22,32 +22,42 @@ import time
 from datetime import datetime, timezone
 
 import snowflake.connector
+from cryptography.hazmat.primitives import serialization
 from dotenv import load_dotenv
 from kafka import KafkaConsumer
 
 load_dotenv()
 
-# ── Snowflake config from .env ─────────────────────────────────────────────────
-SF_CONFIG = {
-    "account":   os.getenv("SNOWFLAKE_ACCOUNT"),
-    "user":      os.getenv("SNOWFLAKE_USER"),
-    "password":  os.getenv("SNOWFLAKE_PASSWORD"),
-    "database":  os.getenv("SNOWFLAKE_DATABASE", "STREAMGUARD"),
-    "schema":    os.getenv("SNOWFLAKE_SCHEMA", "PUBLIC"),
-    "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE", "STREAMGUARD_WH"),
-    "role":      os.getenv("SNOWFLAKE_ROLE", "SYSADMIN"),
-}
-
 KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9093")
-BATCH_SIZE = 100        # Write to Snowflake every 100 messages (reduces API calls)
-BATCH_TIMEOUT_SEC = 10  # Or every 10 seconds, whichever comes first
+BATCH_SIZE = 100
+BATCH_TIMEOUT_SEC = 10
+
+
+def _load_private_key():
+    key_path = os.getenv("SNOWFLAKE_PRIVATE_KEY_PATH", "snowflake_key.p8")
+    with open(key_path, "rb") as f:
+        private_key = serialization.load_pem_private_key(f.read(), password=None)
+    return private_key.private_bytes(
+        encoding=serialization.Encoding.DER,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    )
 
 
 def get_snowflake_connection():
-    """Create and return a Snowflake connection."""
+    """Create and return a Snowflake connection using key-pair auth."""
     print("Connecting to Snowflake...")
-    conn = snowflake.connector.connect(**SF_CONFIG)
-    print(f"Connected to Snowflake account: {SF_CONFIG['account']}")
+    conn = snowflake.connector.connect(
+        account=os.getenv("SNOWFLAKE_ACCOUNT"),
+        region=os.getenv("SNOWFLAKE_REGION", "us-east-1"),
+        user=os.getenv("SNOWFLAKE_USER"),
+        private_key=_load_private_key(),
+        database=os.getenv("SNOWFLAKE_DATABASE", "STREAMGUARD"),
+        schema=os.getenv("SNOWFLAKE_SCHEMA", "PUBLIC"),
+        warehouse=os.getenv("SNOWFLAKE_WAREHOUSE", "STREAMGUARD_WH"),
+        role=os.getenv("SNOWFLAKE_ROLE", "ACCOUNTADMIN"),
+    )
+    print(f"Connected to Snowflake as {os.getenv('SNOWFLAKE_USER')}")
     return conn
 
 

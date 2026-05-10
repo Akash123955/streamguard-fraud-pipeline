@@ -27,6 +27,7 @@ import plotly.graph_objects as go
 from dotenv import load_dotenv
 from kafka import KafkaConsumer
 import snowflake.connector
+from cryptography.hazmat.primitives import serialization
 
 load_dotenv()
 
@@ -44,17 +45,29 @@ REFRESH_INTERVAL = 3    # seconds between dashboard refreshes
 MAX_FEED_ROWS = 200     # Keep last 200 transactions in the live feed
 
 # ── Snowflake connection ──────────────────────────────────────────────────────
+def _load_private_key():
+    key_path = os.getenv("SNOWFLAKE_PRIVATE_KEY_PATH", "snowflake_key.p8")
+    with open(key_path, "rb") as f:
+        private_key = serialization.load_pem_private_key(f.read(), password=None)
+    return private_key.private_bytes(
+        encoding=serialization.Encoding.DER,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    )
+
 @st.cache_resource
 def get_snowflake_conn():
     """Cache Snowflake connection across reruns."""
     try:
         return snowflake.connector.connect(
             account=os.getenv("SNOWFLAKE_ACCOUNT"),
+            region=os.getenv("SNOWFLAKE_REGION", "us-east-1"),
             user=os.getenv("SNOWFLAKE_USER"),
-            password=os.getenv("SNOWFLAKE_PASSWORD"),
+            private_key=_load_private_key(),
             database=os.getenv("SNOWFLAKE_DATABASE", "STREAMGUARD"),
             schema=os.getenv("SNOWFLAKE_SCHEMA", "PUBLIC"),
             warehouse=os.getenv("SNOWFLAKE_WAREHOUSE", "STREAMGUARD_WH"),
+            role=os.getenv("SNOWFLAKE_ROLE", "ACCOUNTADMIN"),
         )
     except Exception as e:
         st.warning(f"Snowflake not connected: {e}. Using simulated data.")
@@ -77,35 +90,34 @@ def query_snowflake(sql: str, conn) -> pd.DataFrame:
 
 
 # ── Kafka live feed (runs in background thread) ───────────────────────────────
-# We use a deque (double-ended queue) as a thread-safe circular buffer.
-# The Kafka consumer thread pushes messages in; the dashboard reads from it.
-if "transaction_buffer" not in st.session_state:
-    st.session_state.transaction_buffer = deque(maxlen=MAX_FEED_ROWS)
-    st.session_state.kafka_running = False
+# @st.cache_resource runs this function ONCE for the whole server lifetime —
+# the same buffer and thread are reused across every Streamlit rerun/refresh.
+@st.cache_resource
+def get_alert_buffer() -> deque:
+    buf = deque(maxlen=MAX_FEED_ROWS)
+
+    def _worker():
+        consumer = KafkaConsumer(
+            "fraud-alerts",
+            bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+            auto_offset_reset="earliest",
+            group_id=f"streamlit-live-{int(time.time())}",
+            enable_auto_commit=False,
+            value_deserializer=lambda m: json.loads(m.decode("utf-8")),
+            consumer_timeout_ms=2000,
+        )
+        while True:
+            try:
+                for message in consumer:
+                    buf.append(message.value)
+            except Exception:
+                time.sleep(1)
+
+    Thread(target=_worker, daemon=True).start()
+    return buf
 
 
-def start_kafka_consumer():
-    """Background thread: consume fraud-alerts and push to buffer."""
-    consumer = KafkaConsumer(
-        "fraud-alerts",
-        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-        auto_offset_reset="latest",
-        group_id="streamlit-dashboard",
-        value_deserializer=lambda m: json.loads(m.decode("utf-8")),
-        consumer_timeout_ms=1000,
-    )
-    while st.session_state.get("kafka_running", False):
-        try:
-            for message in consumer:
-                st.session_state.transaction_buffer.append(message.value)
-        except Exception:
-            time.sleep(1)
-    consumer.close()
-
-
-if not st.session_state.kafka_running:
-    st.session_state.kafka_running = True
-    Thread(target=start_kafka_consumer, daemon=True).start()
+_ALERT_BUFFER = get_alert_buffer()
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -159,7 +171,7 @@ if not summary_df.empty:
     flagged_vol    = float(row.get("flagged_volume_usd", 0))
 else:
     # Show live buffer stats when Snowflake isn't connected yet
-    buf = list(st.session_state.transaction_buffer)
+    buf = list(_ALERT_BUFFER)
     total_txns  = len(buf)
     flagged     = sum(1 for t in buf if t.get("fraud_score", 0) > 0)
     flag_rate   = (flagged / total_txns * 100) if total_txns > 0 else 0
@@ -210,7 +222,7 @@ with left:
 
 with right:
     st.subheader("Live Fraud Alert Feed")
-    buf = list(st.session_state.transaction_buffer)
+    buf = list(_ALERT_BUFFER)
     if buf:
         feed_df = pd.DataFrame(buf)
         # Filter by selected risk levels
@@ -261,7 +273,7 @@ with left2:
 
 with right2:
     st.subheader("Geographic Fraud Hotspots")
-    buf = list(st.session_state.transaction_buffer)
+    buf = list(_ALERT_BUFFER)
     if buf:
         geo_df = pd.DataFrame([
             t for t in buf

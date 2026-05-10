@@ -12,6 +12,7 @@ Run with:
 import pytest
 from pyspark.sql import SparkSession
 from pyspark.sql import Row
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType, BooleanType
 import sys
 import os
 
@@ -29,6 +30,11 @@ from fraud_rules import (
 @pytest.fixture(scope="session")
 def spark():
     """Create a local SparkSession for testing. Shared across all tests."""
+    import sys
+    # Tell Spark workers to use the same Python as the driver (our venv)
+    os.environ["PYSPARK_PYTHON"] = sys.executable
+    os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
+
     session = (
         SparkSession.builder
         .appName("StreamGuard-Tests")
@@ -39,6 +45,20 @@ def spark():
     session.sparkContext.setLogLevel("ERROR")
     yield session
     session.stop()
+
+
+TEST_SCHEMA = StructType([
+    StructField("transaction_id",    StringType(),  True),
+    StructField("customer_id",       StringType(),  True),
+    StructField("amount",            DoubleType(),  True),
+    StructField("merchant_name",     StringType(),  True),
+    StructField("merchant_category", StringType(),  True),
+    StructField("merchant_country",  StringType(),  True),
+    StructField("customer_lat",      DoubleType(),  True),
+    StructField("customer_lon",      DoubleType(),  True),
+    StructField("is_fraud",          BooleanType(), True),
+    StructField("fraud_type",        StringType(),  True),
+])
 
 
 def make_transaction(spark, **overrides):
@@ -56,7 +76,7 @@ def make_transaction(spark, **overrides):
         "fraud_type": None,
     }
     defaults.update(overrides)
-    return spark.createDataFrame([Row(**defaults)])
+    return spark.createDataFrame([Row(**defaults)], schema=TEST_SCHEMA)
 
 
 # ── Amount Rule Tests ──────────────────────────────────────────────────────────
