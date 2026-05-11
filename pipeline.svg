@@ -127,8 +127,8 @@
   <!-- ═══════════════════════════════ TITLE ═══════════════════════════════ -->
   <text x="450" y="30" text-anchor="middle" fill="#e6edf3"
         font-size="15" font-weight="700" font-family="'Segoe UI',system-ui,sans-serif"
-        letter-spacing="0.4">
-    StreamGuard — Real-Time Fraud Detection Pipeline
+        letter-spacing="0.6">
+    StreamGuard · Catching Fraud at the Speed of Money
   </text>
 
   <!-- ROW LABELS -->
