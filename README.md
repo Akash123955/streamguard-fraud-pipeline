@@ -603,12 +603,16 @@ Add SHAP value breakdowns to every fraud decision — which features drove the s
 
 <div align="center">
 
-Built by **Satish Varma**
+Built by **Satish Varma Vejarla**
 
-MS Data Science · University of Massachusetts Dartmouth
+MS Data Science · University of Massachusetts Dartmouth · GPA 3.61 / 4.0
 
-Previously **Data & Backend Engineering Intern** at AaronBux Asset Management —
-built production pipelines on AWS (Lambda, DynamoDB, Athena, S3, EventBridge, Amplify)
+Previously **Data Engineer at Accenture** (2021–2023, Hyderabad) —
+built production ETL/ELT pipelines on AWS (Glue, Lambda, S3, Redshift), orchestrated
+multi-stage workflows with Apache Airflow, processed large-scale datasets with PySpark on EMR,
+and delivered self-service Tableau and Power BI dashboards for cross-functional stakeholders.
+
+**Certifications:** SnowPro Core · AWS Certified Cloud Practitioner
 
 This project demonstrates end-to-end data engineering across the full modern stack:
 event streaming · stream processing · cloud data warehousing · ELT · orchestration · real-time dashboards

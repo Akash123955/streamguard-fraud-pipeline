@@ -25,7 +25,7 @@ Make sure you have these installed before starting:
 ### Step 1 — Clone the repo
 
 ```bash
-git clone https://github.com/yourusername/streamguard-fraud-pipeline.git
+git clone https://github.com/Akash123955/streamguard-fraud-pipeline.git
 cd streamguard-fraud-pipeline
 ```
 
