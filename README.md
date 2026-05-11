@@ -613,8 +613,8 @@ built production pipelines on AWS (Lambda, DynamoDB, Athena, S3, EventBridge, Am
 This project demonstrates end-to-end data engineering across the full modern stack:
 event streaming · stream processing · cloud data warehousing · ELT · orchestration · real-time dashboards
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/yourprofile)
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yourusername)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/svejarla/)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Akash123955)
 
 ---
 
