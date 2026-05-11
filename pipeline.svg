@@ -17,6 +17,52 @@
     <marker id="m-blue"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 2 L9 5 L0 8Z" fill="#29B5E8"/></marker>
     <marker id="m-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 2 L9 5 L0 8Z" fill="#f97316"/></marker>
 
+    <!-- Brand logo icons -->
+    <symbol id="icon-kafka" viewBox="-13 -13 26 26">
+      <circle cx="0" cy="0" r="4" fill="none" stroke="#ccc" stroke-width="2"/>
+      <circle cx="0" cy="-10" r="3.2" fill="none" stroke="#ccc" stroke-width="2"/>
+      <line x1="0" y1="-4" x2="0" y2="-6.8" stroke="#ccc" stroke-width="2"/>
+      <circle cx="8.66" cy="5" r="3.2" fill="none" stroke="#ccc" stroke-width="2"/>
+      <line x1="3.46" y1="2" x2="5.9" y2="3.4" stroke="#ccc" stroke-width="2"/>
+      <circle cx="-8.66" cy="5" r="3.2" fill="none" stroke="#ccc" stroke-width="2"/>
+      <line x1="-3.46" y1="2" x2="-5.9" y2="3.4" stroke="#ccc" stroke-width="2"/>
+    </symbol>
+    <symbol id="icon-spark" viewBox="-10 -10 20 20">
+      <polygon points="0,-9 0.96,-2.31 6.36,-6.36 2.31,-0.96 9,0 2.31,0.96 6.36,6.36 0.96,2.31 0,9 -0.96,2.31 -6.36,6.36 -2.31,0.96 -9,0 -2.31,-0.96 -6.36,-6.36 -0.96,-2.31" fill="#e25a1c"/>
+    </symbol>
+    <symbol id="icon-snowflake" viewBox="-10 -10 20 20">
+      <g stroke="#29B5E8" stroke-width="1.8" stroke-linecap="round" fill="none">
+        <line x1="0" y1="-9" x2="0" y2="9"/>
+        <line x1="-7.8" y1="-4.5" x2="7.8" y2="4.5"/>
+        <line x1="7.8" y1="-4.5" x2="-7.8" y2="4.5"/>
+        <line x1="0" y1="-5.5" x2="-2.2" y2="-7.2"/>
+        <line x1="0" y1="-5.5" x2="2.2" y2="-7.2"/>
+        <line x1="0" y1="5.5" x2="-2.2" y2="7.2"/>
+        <line x1="0" y1="5.5" x2="2.2" y2="7.2"/>
+        <line x1="4.8" y1="-2.8" x2="6.4" y2="-1.2"/>
+        <line x1="4.8" y1="-2.8" x2="3.5" y2="-4.7"/>
+        <line x1="-4.8" y1="2.8" x2="-6.4" y2="1.2"/>
+        <line x1="-4.8" y1="2.8" x2="-3.5" y2="4.7"/>
+        <line x1="-4.8" y1="-2.8" x2="-6.4" y2="-1.2"/>
+        <line x1="-4.8" y1="-2.8" x2="-3.5" y2="-4.7"/>
+        <line x1="4.8" y1="2.8" x2="6.4" y2="1.2"/>
+        <line x1="4.8" y1="2.8" x2="3.5" y2="4.7"/>
+        <polygon points="0,-2.5 2.5,0 0,2.5 -2.5,0" fill="#29B5E8" stroke="none"/>
+      </g>
+    </symbol>
+    <symbol id="icon-airflow" viewBox="-10 -10 20 20">
+      <path d="M 0,0 L 0,-9 A 9,9 0 0,1 9,0 Z" fill="#E0213D"/>
+      <path d="M 0,0 L 9,0 A 9,9 0 0,1 0,9 Z" fill="#017CEE"/>
+      <path d="M 0,0 L 0,9 A 9,9 0 0,1 -9,0 Z" fill="#00C44F"/>
+      <path d="M 0,0 L -9,0 A 9,9 0 0,1 0,-9 Z" fill="#16B8C8"/>
+      <circle cx="0" cy="0" r="2.2" fill="white"/>
+    </symbol>
+    <symbol id="icon-streamlit" viewBox="-10 -10 20 20">
+      <path d="M -8,7 L 0,-9 L 1,1 Z" fill="#7D2020"/>
+      <path d="M 0,-9 L 1,1 L 8,7 Z" fill="#FF4B4B"/>
+      <path d="M 1,1 L 8,7 L -8,7 Z" fill="#CC3030"/>
+    </symbol>
+
     <!-- Dot motion paths (row 1 horizontal) -->
     <path id="p12" d="M 236,113 L 273,113"/>
     <path id="p23" d="M 431,113 L 468,113"/>
@@ -81,7 +127,8 @@
   <rect x="275" y="48" width="155" height="130" rx="10" fill="none" stroke="#888" stroke-width="1.5">
     <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite" begin="0.5s"/>
   </rect>
-  <text x="352" y="72"  text-anchor="middle" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">📨 Apache Kafka</text>
+  <use xlink:href="#icon-kafka" x="305" y="57" width="14" height="14"/>
+  <text x="322" y="72"  text-anchor="start" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">Apache Kafka</text>
   <text x="352" y="96"  text-anchor="middle" fill="#8b949e" font-size="9.5" font-family="sans-serif">raw-transactions</text>
   <text x="352" y="112" text-anchor="middle" fill="#e6edf3" font-size="10"  font-family="sans-serif" font-weight="600">6 partitions</text>
   <text x="352" y="128" text-anchor="middle" fill="#8b949e" font-size="9.5" font-family="sans-serif">fraud-alerts</text>
@@ -96,7 +143,8 @@
   <rect x="470" y="48" width="155" height="130" rx="10" fill="none" stroke="#e25a1c" stroke-width="1.5">
     <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite" begin="1s"/>
   </rect>
-  <text x="547" y="72"  text-anchor="middle" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">⚙️ Apache Spark</text>
+  <use xlink:href="#icon-spark" x="500" y="57" width="14" height="14"/>
+  <text x="517" y="72"  text-anchor="start" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">Apache Spark</text>
   <text x="547" y="96"  text-anchor="middle" fill="#8b949e" font-size="9.5" font-family="sans-serif">Structured Streaming</text>
   <text x="547" y="112" text-anchor="middle" fill="#e6edf3" font-size="10"  font-family="sans-serif" font-weight="600">micro-batch 5s</text>
   <text x="547" y="128" text-anchor="middle" fill="#8b949e" font-size="9.5" font-family="sans-serif">4 fraud rules</text>
@@ -111,7 +159,8 @@
   <rect x="665" y="48" width="155" height="130" rx="10" fill="none" stroke="#29B5E8" stroke-width="1.5">
     <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite" begin="1.5s"/>
   </rect>
-  <text x="742" y="72"  text-anchor="middle" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">❄️ Snowflake</text>
+  <use xlink:href="#icon-snowflake" x="708" y="57" width="14" height="14"/>
+  <text x="725" y="72"  text-anchor="start" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">Snowflake</text>
   <text x="742" y="96"  text-anchor="middle" fill="#8b949e" font-size="9.5" font-family="sans-serif">Hybrid Tables</text>
   <text x="742" y="112" text-anchor="middle" fill="#e6edf3" font-size="10"  font-family="sans-serif" font-weight="600">FRAUD_ALERTS</text>
   <text x="742" y="128" text-anchor="middle" fill="#29B5E8" font-size="10"  font-family="sans-serif" font-weight="700">&lt; 5ms lookup ⚡</text>
@@ -181,7 +230,8 @@
   <rect x="372" y="318" width="155" height="130" rx="10" fill="none" stroke="#017CEE" stroke-width="1.5">
     <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite" begin="2.5s"/>
   </rect>
-  <text x="449" y="342" text-anchor="middle" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">📅 Airflow</text>
+  <use xlink:href="#icon-airflow" x="422" y="327" width="14" height="14"/>
+  <text x="439" y="342" text-anchor="start" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">Airflow</text>
   <text x="449" y="366" text-anchor="middle" fill="#8b949e" font-size="9.5" font-family="sans-serif">Orchestration DAG</text>
   <text x="449" y="382" text-anchor="middle" fill="#e6edf3" font-size="10"  font-family="sans-serif" font-weight="600">streamguard_daily</text>
   <text x="449" y="398" text-anchor="middle" fill="#017CEE" font-size="10"  font-family="sans-serif" font-weight="700">2 AM nightly</text>
@@ -196,7 +246,8 @@
   <rect x="587" y="318" width="155" height="130" rx="10" fill="none" stroke="#FF4B4B" stroke-width="1.5">
     <animate attributeName="stroke-opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite" begin="3s"/>
   </rect>
-  <text x="664" y="342" text-anchor="middle" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">📊 Streamlit</text>
+  <use xlink:href="#icon-streamlit" x="631" y="327" width="14" height="14"/>
+  <text x="648" y="342" text-anchor="start" fill="white"   font-size="12" font-weight="700" font-family="sans-serif">Streamlit</text>
   <text x="664" y="366" text-anchor="middle" fill="#8b949e" font-size="9.5" font-family="sans-serif">Live Analyst Dashboard</text>
   <text x="664" y="382" text-anchor="middle" fill="#e6edf3" font-size="10"  font-family="sans-serif">Fraud Feed · KPI Metrics</text>
   <text x="664" y="398" text-anchor="middle" fill="#FF4B4B" font-size="10"  font-family="sans-serif" font-weight="700">localhost:8501</text>
