@@ -110,6 +110,16 @@ flowchart TB
 
 ---
 
+## Animated Pipeline
+
+<div align="center">
+
+![StreamGuard Animated Pipeline](pipeline.svg)
+
+</div>
+
+---
+
 ## Live Results — What Actually Ran
 
 > These numbers are from a real run of the pipeline, not estimates.
